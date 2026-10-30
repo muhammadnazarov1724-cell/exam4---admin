@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import logo from '../assets/logo.png'
+import logo from '../../../assets/logo.png'
 
 export default function Header() {
     return (
@@ -29,13 +29,13 @@ export default function Header() {
                         <span className="absolute right-0.5 top-0.5 flex size-4 items-center justify-center rounded-full bg-[#3366ff] text-[10px] font-medium text-white">5</span>
                     </button>
 
-                    <button type="button" aria-label="Профиль Randhir kumar" className="flex items-center gap-3 rounded-md py-1 text-sm hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-400">
+                    <NavLink to="/profile" aria-label="Открыть профиль" className="flex items-center gap-3 rounded-md py-1 text-sm hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-400">
                         <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#19c987] text-base font-semibold text-white">R</span>
                         <span className="hidden lg:inline">Randhir kumar</span>
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                             <path d="m6 9 6 6 6-6" />
                         </svg>
-                    </button>
+                    </NavLink>
                 </div>
             </div>
         </header>

@@ -50,3 +50,25 @@ export function handleLogout() {
 
     window.location.href = '/'
 }
+
+export function getUserId(): string | null {
+    const token = localStorage.getItem('token')
+
+    if (!token) return null
+
+    try {
+        const part = token.split('.')[1]
+
+        const base64 = part.replace(/-/g, '+').replace(/_/g, '/')
+        const payload = JSON.parse(atob(base64))
+
+        const id =
+            payload.sid ??
+            payload.sub ??
+            payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']
+
+        return typeof id === 'string' ? id : null
+    } catch {
+        return null
+    }
+}

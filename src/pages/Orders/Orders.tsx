@@ -1,5 +1,5 @@
-import Header from '../../components/Header'
-import Aside from '../../components/aside'
+import Header from '../Dashboard/components/Header'
+import Aside from '../Dashboard/components/aside'
 
 // Временные данные из макета. Запросы и действия подключим отдельно.
 const orders = [

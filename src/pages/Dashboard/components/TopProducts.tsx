@@ -1,47 +1,108 @@
-// Цветные миниатюры временно заменяют фотографии одежды.
-const products = [
-    { name: 'Men Grey Hoodie', price: '$49.90', units: 204, color: '#485b60', background: '#d8e5e8' },
-    { name: 'Women Striped T-Shirt', price: '$34.90', units: 155, color: '#8b8c87', background: '#e4e1dc' },
-    { name: 'Women White T-Shirt', price: '$40.90', units: 120, color: '#f4f0e8', background: '#dde7e8' },
-    { name: 'Men White T-Shirt', price: '$49.90', units: 204, color: '#e9e6df', background: '#e9e8e2' },
-    { name: 'Women Red T-Shirt', price: '$34.90', units: 155, color: '#dc4d56', background: '#e3e8e7' },
-]
+import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../../store/store";
 
-export default function TopProducts() {
-    return (
-        <section className="min-w-0 rounded-md border border-[#e6e9ef] bg-white p-5">
-            <h2 className="text-base font-semibold text-[#1c2637]">Top Products by Units Sold</h2>
+type Props = {
+  emptyOnly?: boolean;
+};
 
-            <div className="mt-4 overflow-x-auto">
-                <table className="w-full min-w-[410px] text-left text-sm">
-                    <thead className="border-b border-[#edf0f5] text-xs text-[#8590a5]">
-                        <tr>
-                            <th scope="col" className="pb-3 pr-4 font-normal">Name</th>
-                            <th scope="col" className="pb-3 pr-4 text-right font-normal">Price</th>
-                            <th scope="col" className="pb-3 text-right font-normal">Units</th>
-                        </tr>
-                    </thead>
-                    <tbody className="text-[#354052]">
-                        {products.map((item) => (
-                            <tr key={item.name}>
-                                <td className="py-2.5 pr-4">
-                                    <div className="flex items-center gap-3">
-                                        <svg viewBox="0 0 40 44" aria-hidden="true" className="h-11 w-10 shrink-0 rounded">
-                                            <rect width="40" height="44" rx="4" fill={item.background} />
-                                            <path d="m13 5-9 9 6 6 3-4v24h14V16l3 4 6-6-9-9-3 3h-8Z" fill={item.color} stroke="#1c2637" strokeOpacity="0.12" strokeLinejoin="round" />
-                                            <path d="M16 5c0 5 8 5 8 0" fill="none" stroke="#1c2637" strokeOpacity="0.2" />
-                                            <path d="M15 16v20m10-20v20" stroke="white" strokeOpacity="0.15" />
-                                        </svg>
-                                        <span className="text-xs font-medium">{item.name}</span>
-                                    </div>
-                                </td>
-                                <td className="py-2.5 pr-4 text-right text-xs tabular-nums">{item.price}</td>
-                                <td className="py-2.5 text-right text-xs tabular-nums">{item.units}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    )
+export default function TopProducts({ emptyOnly = false }: Props) {
+  const dashboard = useSelector((state: RootState) => state.data.dashboard);
+
+  if (!dashboard) return null;
+
+  const filteredProducts = emptyOnly
+    ? dashboard.products.filter((product) => product.quantity === 0)
+    : dashboard.products;
+
+  const products = filteredProducts.slice(0, 5);
+
+  return (
+    <section className="min-w-0 rounded-md border border-[#e6e9ef] p-5">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="font-semibold">
+          {emptyOnly ? "Нет в наличии" : "Каталог товаров"}
+        </h2>
+
+        <NavLink to="/products" className="text-xs text-blue-600">
+          Все товары →
+        </NavLink>
+      </div>
+
+      <div className="mt-4 overflow-x-auto">
+        <table className="w-full min-w-[400px] text-left text-sm">
+          <thead className="border-b border-[#edf0f5] text-xs text-[#8590a5]">
+            <tr>
+              <th scope="col" className="pb-3 pr-4 font-normal">
+                Товар
+              </th>
+              <th scope="col" className="pb-3 pr-4 text-right font-normal">
+                Цена
+              </th>
+              <th scope="col" className="pb-3 text-right font-normal">
+                Остаток
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {products.length === 0 && (
+              <tr>
+                <td colSpan={3} className="py-8 text-center text-slate-500">
+                  {emptyOnly
+                    ? "Товаров с нулевым остатком нет."
+                    : "Каталог пока пуст."}
+                </td>
+              </tr>
+            )}
+
+            {products.map((product) => (
+              <tr
+                key={product.id}
+                className="border-b border-[#edf0f5] last:border-0"
+              >
+                <td className="py-3 pr-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded bg-slate-100">
+                      {product.image ? (
+                        <img
+                          src={`${import.meta.env.VITE_API}/images/${product.image}`}
+                          alt={product.productName}
+                          className="size-full object-contain"
+                        />
+                      ) : (
+                        <span className="text-slate-400">—</span>
+                      )}
+                    </div>
+
+                    <span className="text-xs font-medium">
+                      {product.productName}
+                    </span>
+                  </div>
+                </td>
+
+                <td className="py-3 pr-4 text-right text-xs tabular-nums">
+                  ${product.price.toFixed(2)}
+                </td>
+
+                <td
+                  className={`py-3 text-right text-xs tabular-nums ${
+                    product.quantity === 0 ? "text-red-500" : "text-[#354052]"
+                  }`}
+                >
+                  {product.quantity}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {products.length > 0 && (
+        <p className="mt-4 text-xs text-[#8590a5]">
+          Показано {products.length} из {filteredProducts.length}
+        </p>
+      )}
+    </section>
+  );
 }
